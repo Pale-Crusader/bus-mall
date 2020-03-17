@@ -16,8 +16,9 @@ function MallImageObjectGenerator(displayName, nameAttributeString, imagePathStr
 MallImageObjectGenerator.prototype.numberOfClicks = 0;
 MallImageObjectGenerator.prototype.timesRendered = 0;
 MallImageObjectGenerator.prototype.displayCurrentVotesInUl = function() {
-    var listChangedEl = document.getElementById(this.name);
-    listChangedEl.textContent = (this.ulDisplay + ': ' + this.numberOfClicks);
+    var listChangedEl = document.createElement('li');
+    var rewriteContentToList = (this.ulDisplay + ': ' + this.numberOfClicks + ' Vote(s).');
+    listChangedEl.textContent = rewriteContentToList;
     resultsListEl.appendChild(listChangedEl);
 }
 
@@ -59,23 +60,35 @@ function displayThreeNewImages() {
     image1.src = randomlyReplaceImage1.source;
     image1.name = randomlyReplaceImage1.name;
     randomlyReplaceImage1.timesRendered++;
-    randomlyReplaceImage1.displayCurrentVotesInUl();
 
     var randomlyReplaceImage2 = generateRandomImage();
     image2.src = randomlyReplaceImage2.source;
     image2.name = randomlyReplaceImage2.name;
     randomlyReplaceImage2.timesRendered++;
-    randomlyReplaceImage2.displayCurrentVotesInUl();
 
     var randomlyReplaceImage3 = generateRandomImage();
     image3.src = randomlyReplaceImage3.source;
     image3.name = randomlyReplaceImage3.name;
     randomlyReplaceImage1.timesRendered++;
-    randomlyReplaceImage1.displayCurrentVotesInUl();
-    console.log(listOfAllImages)
+    
+    for (var resultIndex = 0; resultIndex < listOfAllImages.length; resultIndex++) {
+    listOfAllImages[resultIndex].displayCurrentVotesInUl();
+    }
+    numberOfChancesToVote--;
+
+    if (numberOfChancesToVote <= 0) {
+        var clearArticleEl = document.getElementById('imageDisplayArea');
+        var displayThanksParentEl = document.getElementById('thanks');
+        clearArticleEl.innerHTML = '';
+        var thanksForVotingEl = document.createElement('h1');
+        thanksForVotingEl.textContent = ('Thank you for completing this market research survey of potential interest for these amazing products.');
+        displayThanksParentEl.appendChild(thanksForVotingEl);
+    }
 }
 
 function imageClickHandler(event) {
+    resultsListEl.innerHTML = '';
+ 
     for (var checkIndex = 0; checkIndex < listOfAllImages.length; checkIndex++) {
         if (listOfAllImages[checkIndex].name === event.target.name) {
             listOfAllImages[checkIndex].numberOfClicks++;

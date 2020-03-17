@@ -1,0 +1,69 @@
+header {
+    background-image: linear-gradient(to bottom right, orangered, gray);
+    width: 100%;
+    height: fit-content;
+}
+header img {
+    float: left;
+}
+header h1 {
+    text-align: center;
+    font-size: 72px;
+    font-family: fantasy;
+}
+#resultDisplayArea {
+    float: left;
+    width: 20%;
+    border-radius: 30px;
+}
+#results {
+    margin:auto;
+    width:fit-content;
+}
+#primaryArticle {
+    float: right;
+    width: 70%;
+    border-radius: 30px;
+}
+#primaryArticle h2 {
+    text-align: center;
+    font-family: fantasy;
+}
+#thanks h1 {
+    width: 50%;
+    text-align: center;
+    margin-top: 50px;
+}
+#imageDisplayArea {
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+#imageDisplayArea img {
+    width: 300px;
+    margin: 30px;
+    vertical-align: center;
+}
+#mainText {
+    font-size: large;
+    font-family: sans-serif;
+    padding: 10px;
+    margin-top: 40px;
+}
+main hr {
+    border: 3px orangered solid;
+    width: 100%;
+}
+footer {
+    height: 100px;
+    background-image: linear-gradient(to bottom right, gray,  orangered);
+    width: 100%;
+    height: fit-content;
+}
+footer p {
+    text-align: center;
+    font-size: x-small;
+    color: darkgrey;
+
+}
