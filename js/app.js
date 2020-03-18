@@ -6,12 +6,81 @@ var resultsListEl =document.getElementById('results')
 var image1 = document.getElementById('image1');
 var image2 = document.getElementById('image2');
 var image3 = document.getElementById('image3');
+var imageLabelList = [];
+
+var ctx = document.getElementById('myChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: imageLabelList,
+        datasets: [{
+            label: '# of Votes',
+            data: [],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(153, 102, 255, 0.5)',
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(153, 102, 255, 0.5)',
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(153, 102, 255, 0.5)',
+                'rgba(255, 99, 132, 0.5)',
+                'rgba(54, 162, 235, 0.5)',
+                'rgba(255, 206, 86, 0.5)',
+                'rgba(75, 192, 192, 0.5)',
+                'rgba(255, 159, 64, 0.5)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+
 
 function MallImageObjectGenerator(displayName, nameAttributeString, imagePathString) {
     this.ulDisplay = displayName;
     this.name = nameAttributeString;
     this.source = imagePathString;
     listOfAllImages.push(this);
+    imageLabelList.push(this.ulDisplay);
 }
 MallImageObjectGenerator.prototype.numberOfClicks = 0;
 MallImageObjectGenerator.prototype.timesRendered = 0;
@@ -75,8 +144,26 @@ function displayThreeNewImages() {
     listOfAllImages[resultIndex].displayCurrentVotesInUl();
     }
     numberOfChancesToVote--;
+}
 
+function chartDisplayUpdater() {
+    for (var chartIndex = 0; chartIndex < listOfAllImages.length; chartIndex++) {
+        myChart.data.datasets[0].data.push(listOfAllImages[chartIndex].numberOfClicks);
+        console.log(listOfAllImages[chartIndex].numberOfClicks);
+    }
+}
+
+function imageClickHandler(event) {
+    resultsListEl.innerHTML = '';
+
+    for (var checkIndex = 0; checkIndex < listOfAllImages.length; checkIndex++) {
+        if (listOfAllImages[checkIndex].name === event.target.name) {
+            listOfAllImages[checkIndex].numberOfClicks++;
+        }
+    }
     if (numberOfChancesToVote <= 0) {
+        chartDisplayUpdater();
+        myChart.update();
         var clearArticleEl = document.getElementById('imageDisplayArea');
         var displayThanksParentEl = document.getElementById('thanks');
         clearArticleEl.innerHTML = '';
@@ -84,21 +171,9 @@ function displayThreeNewImages() {
         thanksForVotingEl.textContent = ('Thank you for completing this market research survey of potential interest for these amazing products.');
         displayThanksParentEl.appendChild(thanksForVotingEl);
     }
-}
-
-function imageClickHandler(event) {
-    resultsListEl.innerHTML = '';
- 
-    for (var checkIndex = 0; checkIndex < listOfAllImages.length; checkIndex++) {
-        if (listOfAllImages[checkIndex].name === event.target.name) {
-            listOfAllImages[checkIndex].numberOfClicks++;
-        }
-        console.log(event.target.name + "vs this : ");
-        console.log(listOfAllImages[checkIndex].name);
-        console.log("resulting in this number of clicks" + listOfAllImages[checkIndex].numberOfClicks)
-    }
     displayThreeNewImages();
 }
+
 displayThreeNewImages();
 image1.addEventListener('click', imageClickHandler);
 image2.addEventListener('click', imageClickHandler);
