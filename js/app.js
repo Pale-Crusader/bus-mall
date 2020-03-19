@@ -1,12 +1,18 @@
 'strict';
 
+// Very first thing, we must detect if they have stored data, I pan on detecting two key values and ListOfAllImages
+// only stores
+// if detects 
+
 var listOfAllImages = [];
 var numberOfChancesToVote = 25;
-var resultsListEl =document.getElementById('results')
+var resultsListEl = document.getElementById('results');
+var newTriesFormEl = document.getElementById('newTriesForm');
 var image1 = document.getElementById('image1');
 var image2 = document.getElementById('image2');
 var image3 = document.getElementById('image3');
 var imageLabelList = [];
+
 
 var ctx = document.getElementById('myChart').getContext('2d');
 var myChart = new Chart(ctx, {
@@ -84,12 +90,7 @@ function MallImageObjectGenerator(displayName, nameAttributeString, imagePathStr
 }
 MallImageObjectGenerator.prototype.numberOfClicks = 0;
 MallImageObjectGenerator.prototype.timesRendered = 0;
-MallImageObjectGenerator.prototype.displayCurrentVotesInUl = function() {
-    var listChangedEl = document.createElement('li');
-    var rewriteContentToList = (this.ulDisplay + ': ' + this.numberOfClicks + ' Vote(s).');
-    listChangedEl.textContent = rewriteContentToList;
-    resultsListEl.appendChild(listChangedEl);
-}
+
 
 new MallImageObjectGenerator('R2D2 Bag', 'bag', '/img/bag.jpg');
 new MallImageObjectGenerator('Banana Slicer', 'banana', '/img/banana.jpg');
@@ -112,6 +113,7 @@ new MallImageObjectGenerator('USB Tentacle', 'usb', '/img/usb.gif');
 new MallImageObjectGenerator('Novelty Watering Can', 'water-can', '/img/water-can.jpg');
 new MallImageObjectGenerator('Oblique Wine Glass', 'wine-glass', '/img/wine-glass.jpg');
 
+
 function generateRandomImage() {
     var imageIndex = Math.floor(Math.random() * listOfAllImages.length);
     while (
@@ -122,6 +124,15 @@ function generateRandomImage() {
         imageIndex = Math.floor(Math.random() * listOfAllImages.length);
     }
     return listOfAllImages[imageIndex];
+}
+function displayCurrentVotesInUl() {
+    for (var resultIndex = 0; resultIndex < listOfAllImages.length; resultIndex++) {
+        var imageImageResult = listOfAllImages[resultIndex];
+        var listChangedEl = document.createElement('li');
+        var rewriteContentToList = (imageImageResult.ulDisplay + ': ' + imageImageResult.numberOfClicks + ' Vote(s).');
+        listChangedEl.textContent = rewriteContentToList;
+        resultsListEl.appendChild(listChangedEl);
+   }
 }
 
 function displayThreeNewImages() {
@@ -140,17 +151,19 @@ function displayThreeNewImages() {
     image3.name = randomlyReplaceImage3.name;
     randomlyReplaceImage1.timesRendered++;
     
-    for (var resultIndex = 0; resultIndex < listOfAllImages.length; resultIndex++) {
-    listOfAllImages[resultIndex].displayCurrentVotesInUl();
-    }
+    displayCurrentVotesInUl()
     numberOfChancesToVote--;
 }
 
 function chartDisplayUpdater() {
     for (var chartIndex = 0; chartIndex < listOfAllImages.length; chartIndex++) {
         myChart.data.datasets[0].data.push(listOfAllImages[chartIndex].numberOfClicks);
-        console.log(listOfAllImages[chartIndex].numberOfClicks);
     }
+}
+
+function storeSuveyInStorage() {
+    localStorage.clear();
+    localStorage.setItem("listofallimages", JSON.stringify(listOfAllImages));
 }
 
 function imageClickHandler(event) {
@@ -164,6 +177,7 @@ function imageClickHandler(event) {
     if (numberOfChancesToVote <= 0) {
         chartDisplayUpdater();
         myChart.update();
+        storeSuveyInStorage();
         var clearArticleEl = document.getElementById('imageDisplayArea');
         var displayThanksParentEl = document.getElementById('thanks');
         clearArticleEl.innerHTML = '';
@@ -171,10 +185,28 @@ function imageClickHandler(event) {
         thanksForVotingEl.textContent = ('Thank you for completing this market research survey of potential interest for these amazing products.');
         displayThanksParentEl.appendChild(thanksForVotingEl);
     }
+
     displayThreeNewImages();
 }
 
+function detectSuveyInStorage() {
+    var storedListOfAllImages = localStorage.getItem("listofallimages");
+    if (storedListOfAllImages) {
+        listOfAllImages = JSON.parse(storedListOfAllImages);
+        chartDisplayUpdater();
+        myChart.update();
+        displayCurrentVotesInUl()
+    }
+    // since we want to give extra chances after a refresh of page without loss of data
+    if (storedListOfAllImages && (numberOfChancesToVote <= 0)) {
+        numberOfChancesToVote = 25;
+    }
+}
+
 displayThreeNewImages();
+
 image1.addEventListener('click', imageClickHandler);
 image2.addEventListener('click', imageClickHandler);
 image3.addEventListener('click', imageClickHandler);
+
+detectSuveyInStorage();

@@ -40,7 +40,7 @@ header h1 {
     margin-right: auto;
 }
 #imageDisplayArea img {
-    width: 300px;
+    height: 300px;
     margin: 30px;
     vertical-align: center;
 }
